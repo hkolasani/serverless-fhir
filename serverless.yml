@@ -1,0 +1,57 @@
+service: observation-service # NOTE: update this with your service name
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+resources:
+  Resources:
+    DynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: FHIR-Table
+        AttributeDefinitions:
+          - AttributeName: PatientId-ResourceName
+            AttributeType: S
+          - AttributeName: Timestamp
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PatientId-ResourceName
+            KeyType: HASH
+          - AttributeName: Timestamp
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    DynamoDBIamPolicy:
+      Type: AWS::IAM::Policy
+      DependsOn: DynamoDbTable
+      Properties:
+        PolicyName: lambda-dynamodb
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:Query
+              Resource: arn:aws:dynamodb:*:*:table/FHIR-Table
+        Roles:
+          - Ref: IamRoleLambdaExecution
+
+functions:
+  create:
+    handler: handler.create
+    events:
+      - http:
+          path: /{resourceName}/{patientId}
+          method: post
+          cors: true
+  get:
+    handler: handler.get
+    events:
+      - http:
+          path: /{resourceName}/{patientId}
+          method: get
+          cors: true
