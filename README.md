@@ -2,7 +2,7 @@
 
 This post outlines a simple FHIR API that I put together using AWS Lambda and Serverless.com framework.
 
-Safe Harbor Statement
+## Safe Harbor Statement
 
 I have a tendency to over simplify things but I believe that the simplest solution is almost always the best. Having quoted that, this is just a basic reference implementation and it needs little more work to make it production worthy. Here we go:
 
