@@ -1,6 +1,6 @@
 # serverless-fhir
 
-This post outlines a simple FHIR API that I put together using AWS Lambda and Serverless.com framework.
+This repo contains the code for a simple FHIR API that I put together using AWS Lambda and Serverless.com framework.
 
 ## Safe Harbor Statement
 
@@ -28,6 +28,7 @@ And the FHIR resource record is stored as JSON in the back-end database.
 
 Serveless.com framework an easy way to define the AWS Lambda functions and events that are deployed on AWS API Gateway using the serverless.yaml file. See below.
 
+```
 functions:
   create:
     handler: handler.create
@@ -43,6 +44,7 @@ functions:
           path: /{resourceName}/{patientId}
           method: get
           cors: true
+```
 Both the API functions take Patient Id and Resource Name as parameters thus supporting any type of FHIR resource. The 'create' function expects the FHIR JSON data in the request body.
 
 The Lambda code for these two functions is in handler.js.
@@ -55,6 +57,7 @@ e.g Key: Tbt3KuCY0B5PSrJvCu2j-Observations
 
 The DynamoDB config can also be defined using the serverless.yaml file as shown below.
 
+```
   DynamoDbTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -69,8 +72,10 @@ The DynamoDB config can also be defined using the serverless.yaml file as shown 
             KeyType: HASH
           - AttributeName: Timestamp
             KeyType: RANGE
+```
 DynamoDB supports storing of the entire JSON-formatted documents as single item attribute.
 
+```
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 var params = {
@@ -83,7 +88,7 @@ var params = {
 };
 
 docClient.put(params, function(err, data) {}
-
+```
 ## Use Cases
 
 A Patient using a Mobile app can post the health care data like vitals to a back-end storage using this API
